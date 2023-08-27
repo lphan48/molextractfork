@@ -1,7 +1,7 @@
 import json
 import textwrap
 
-from molextract.rules.molcas import log, mcpdft, rasscf, rassi, general
+from molextract.rules.molcas import log, mcpdft, rasscf, rassi, general, scf
 from molextract.parser import Parser
 from util import molextract_test_file, IntRule
 
@@ -306,3 +306,16 @@ def test_mol_prop():
             "total": 5.1169E-01
         }
     }]
+
+
+def test_scf_energy():
+    data = textwrap.dedent("""\
+    ::    Total SCF energy                              -1887.7011096339
+    One-electron energy                           -9292.0609723944
+    Two-electron energy                            4074.8721320410""")
+    rule = scf.SCFEnergy()
+    parser = Parser(rule)
+
+    assert parser.feed(data) == [{"total_scf_energy": -1887.7011096339, "one_e_energy": -9292.0609723944,
+                                  "two_e_energy": 4074.8721320410}]
+
